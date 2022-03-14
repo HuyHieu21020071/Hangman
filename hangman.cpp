@@ -1,31 +1,7 @@
 #include <bits/stdc++.h>
-
+#include <fstream>
 using namespace std;
-string WORD_LIST[] = {
- "angle", "ant", "apple", "arch", "arm", "army",
- "baby", "bag", "ball", "band", "basin", "basket", "bath", "bed", "bee", "bell", "berry", "bird", "blade", "board", "boat", "bone", "book", "boot", "bottle", "box", "boy",
- "brain", "brake", "branch", "brick", "bridge", "brush", "bucket", "bulb", "button",
- "cake", "camera", "card", "cart", "carriage", "cat", "chain", "cheese", "chest",
- "chin", "church", "circle", "clock", "cloud", "coat", "collar", "comb", "cord",
- "cow", "cup", "curtain", "cushion",
- "dog", "door", "drain", "drawer", "dress", "drop", "ear", "egg", "engine", "eye",
- "face", "farm", "feather", "finger", "fish", "flag", "floor", "fly",
- "foot", "fork", "fowl", "frame", "garden", "girl", "glove", "goat", "gun",
- "hair", "hammer", "hand", "hat", "head", "heart", "hook", "horn", "horse",
- "hospital", "house", "island", "jewel", "kettle", "key", "knee", "knife", "knot",
- "leaf", "leg", "library", "line", "lip", "lock",
- "map", "match", "monkey", "moon", "mouth", "muscle",
- "nail", "neck", "needle", "nerve", "net", "nose", "nut",
- "office", "orange", "oven", "parcel", "pen", "pencil", "picture", "pig", "pin",
- "pipe", "plane", "plate", "plow", "pocket", "pot", "potato", "prison", "pump",
- "rail", "rat", "receipt", "ring", "rod", "roof", "root",
- "sail", "school", "scissors", "screw", "seed", "sheep", "shelf", "ship", "shirt",
- "shoe", "skin", "skirt", "snake", "sock", "spade", "sponge", "spoon", "spring",
- "square", "stamp", "star", "station", "stem", "stick", "stocking", "stomach",
- "store", "street", "sun", "table", "tail", "thread", "throat", "thumb", "ticket",
- "toe", "tongue", "tooth", "town", "train", "tray", "tree", "trousers", "umbrella",
- "wall", "watch", "wheel", "whip", "whistle", "window", "wire", "wing", "worm",
- };
+vector<string> WORD_LIST;
  const string FIGURE[] = {
  " ------------- \n"
  " | \n"
@@ -85,7 +61,7 @@ string WORD_LIST[] = {
  " ----- \n",
 };
 
-
+void getword_from_file();
 string chooseword();
 string update(string Guessword,string secretWord,char Guess);
 int game_condition(string Guessword,string secretword,int cnt);
@@ -98,6 +74,7 @@ bool contains(string secretword,char Guess);
 main()
 {
     srand(time(NULL));
+    getword_from_file();
     string secretword = chooseword();
     string Guessword = string(secretword.length(),'-');
     do {
@@ -114,11 +91,30 @@ main()
     {
         cout<<"Congratulation! You win!";
     }
-    else cout<<"You lost. The correct word is " << secretword; 
+    else cout<<"You lost. The correct word is " << secretword;
+}
+void getword_from_file()
+{
+    ifstream file("text.txt");
+    if(file.is_open())
+    {
+        string word;
+        while(file >> word)
+        {
+            WORD_LIST.push_back(word);
+        }
+        file.close();
+        return ;
+    }
+    else {
+            cout<<"Unable to openfile";
+            exit(0);
+    }
+
 }
 string chooseword()
 {
-    int sz=200;
+    int sz=WORD_LIST.size();
     string word=WORD_LIST[rand()%sz];
     return word;
 }
@@ -149,6 +145,7 @@ char ReadGuess()
     cout << "Enter your guess: ";
     char your_guess;
     cin>>your_guess;
+    your_guess=tolower(your_guess);
     return your_guess;
 }
 void renderimage(int cnt)
@@ -157,8 +154,9 @@ void renderimage(int cnt)
 }
 bool contains(string secretword,char Guess)
 {
-    for(char u:secretword)
+    for(int i=0;i<secretword.size();i++)
     {
+        char u=secretword[i];
         if(u==Guess) return true;
     }
     return false;
